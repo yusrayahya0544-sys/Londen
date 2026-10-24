@@ -1,0 +1,734 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>London (ለንደን) — Mobile Phones &amp; Accessories</title>
+
+    <meta name="description" content="London (ለንደን) — your trusted mobile phone and accessories shop. Phones, tablets, earbuds, and accessories.">
+
+    <link rel="stylesheet" href="style.css">
+    <script src="supabase-js@2.js"></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+    <div class="announcement-bar" role="region" aria-label="Store promotion announcement">
+        <p class="announcement-text" data-i18n="announcement.promo">
+            🚚 Free delivery on orders over 2000 ETB — Shop now and save!
+        </p>
+    </div>
+
+    <header class="site-header" role="banner">
+
+        <div class="header-top">
+
+            <div class="brand-container">
+                <a href="#" class="brand-link" aria-label="London store home">
+                    <img src="img/photo_2026-10-22_14-13-05.jpg"
+                         alt="London store logo"
+                         class="brand-logo"
+                         width="48"
+                         height="48">
+                    <span class="brand-name">
+                        London <span class="brand-name-amharic" lang="am">(ለንደን)</span>
+                    </span>
+                </a>
+            </div>
+
+            <div class="search-container" role="search" aria-label="Site search">
+                <label for="search-input" class="visually-hidden" data-i18n="search.label">
+                    Search products
+                </label>
+                <input type="search"
+                       id="search-input"
+                       class="search-input"
+                       placeholder="Search phones, earbuds, accessories…"
+                       data-i18n-placeholder="search.placeholder"
+                       aria-label="Search products">
+                <button type="button"
+                        id="search-button"
+                        class="search-button"
+                        aria-label="Submit search"
+                        data-i18n-aria-label="search.button">
+                    🔍
+                </button>
+            </div>
+
+           
+            <div class="language-switcher" role="group" aria-label="Language selector">
+                <label for="language-select" class="visually-hidden" data-i18n="language.label">
+                    Select language
+                </label>
+                <select id="language-select"
+                        name="language"
+                        class="language-select"
+                        aria-label="Select language">
+                    <option value="en" selected>English</option>
+                    <option value="am" lang="am">አማርኛ</option>
+                    <option value="om" lang="om">Afaan Oromo</option>
+                </select>
+            </div>
+
+            <div class="cart-container">
+                <button type="button"
+                        id="cart-button"
+                        class="cart-button"
+                        aria-label="Open shopping cart, 0 items">
+                    <span class="cart-icon" aria-hidden="true">🛒</span>
+                    <span class="cart-count" id="cart-count-badge">0</span>
+                </button>
+            </div>
+
+        </div>
+
+       
+        <nav class="main-nav" aria-label="Main navigation">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active"
+                       aria-current="page"
+                       data-i18n="nav.home">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-i18n="nav.phones">Phones</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-i18n="nav.tablets">Tablets</a>
+                </li>
+             <li class="nav-item">
+    <a href="#" class="nav-link" data-i18n="nav.earbuds">Earbuds</a>
+    </li>
+    <li class="nav-item">
+    <a href="#" class="nav-link" data-i18n="nav.headsets">Headsets</a>
+    </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-i18n="nav.accessories">Accessories</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-i18n="nav.contact">Contact</a>
+                </li>
+            </ul>
+        </nav>
+
+    </header>
+
+<main>
+
+    <section class="hero" id="hero-section" aria-labelledby="hero-heading">
+        <div class="hero-content">
+
+            <h1 class="hero-headline" id="hero-heading" data-i18n="hero.headline">
+                Welcome to London (ለንደን) — Your Mobile Shop
+            </h1>
+
+            <p class="hero-subtitle" data-i18n="hero.subtitle">
+                Discover phones, tablets, earbuds, and accessories — all in one place.
+                Quality products, honest service, delivered to your door.
+            </p>
+
+            <a href="#featured-products"
+               class="hero-cta-button"
+               role="button"
+               data-i18n="hero.cta">
+                Shop Now
+            </a>
+
+        </div>
+
+        <div class="hero-image-wrapper">
+            <img src="img/photo_2_2026-10-22_14-11-13.jpg"
+                 alt="Collection of mobile phones and accessories"
+                 data-i18n-alt="hero.imageAlt"
+                 class="hero-image"
+                 width="1200"
+                 height="600">
+        </div>
+    </section>
+
+    <section class="category-section" id="categories" aria-labelledby="category-heading">
+
+        <h2 class="section-heading" id="category-heading" data-i18n="category.heading">
+            Shop by Category
+        </h2>
+
+        <div class="category-grid">
+
+            <!-- Category: Phones -->
+            <article class="category-card">
+                <img src="img/photo_3_2026-10-22_14-11-13.jpg"
+                     alt="Phones category"
+                     data-i18n-alt="category.phones.imageAlt"
+                     class="category-image"
+                     width="300"
+                     height="200">
+                <h3 class="category-name" data-i18n="category.phones.name">Phones</h3>
+                <a href="#" class="category-link"
+                   aria-label="Explore Phones category"
+                   data-i18n-aria-label="category.phones.linkAria"
+                   data-i18n="category.phones.link">
+                    Explore Phones &rarr;
+                </a>
+            </article>
+
+            <!-- Category: Tablets -->
+            <article class="category-card">
+                <img src="img/photo_4_2026-10-22_14-11-13.jpg"
+                     alt="Tablets category"
+                     data-i18n-alt="category.tablets.imageAlt"
+                     class="category-image"
+                     width="300"
+                     height="200">
+                <h3 class="category-name" data-i18n="category.tablets.name">Tablets</h3>
+                <a href="#" class="category-link"
+                   aria-label="Explore Tablets category"
+                   data-i18n-aria-label="category.tablets.linkAria"
+                   data-i18n="category.tablets.link">
+                    Explore Tablets &rarr;
+                </a>
+            </article>
+
+            <!-- Category: Earbuds -->
+            <article class="category-card">
+                <img src="img/photo_5_2026-10-22_14-11-13.jpg"
+                     alt="Earbuds category"
+                     data-i18n-alt="category.earbuds.imageAlt"
+                     class="category-image"
+                     width="300"
+                     height="200">
+                <h3 class="category-name" data-i18n="category.earbuds.name">Earbuds</h3>
+ <a href="#" class="category-link"
+                   aria-label="Explore Earbuds category"
+                   data-i18n-aria-label="category.earbuds.linkAria"
+                   data-i18n="category.earbuds.link">
+                    Explore Earbuds &rarr;
+                </a>
+            </article>
+
+            <!-- Category: Headsets -->
+            <article class="category-card">
+                <img src="img/photo_6_2026-10-22_14-11-13.jpg"
+                     alt="Headsets category"
+                     data-i18n-alt="category.headsets.imageAlt"
+                     class="category-image"
+                     width="300"
+                     height="200">
+                <h3 class="category-name" data-i18n="category.headsets.name">Headsets</h3>
+                <a href="#" class="category-link"
+                   aria-label="Explore Headsets category"
+                   data-i18n-aria-label="category.headsets.linkAria"
+                   data-i18n="category.headsets.link">
+                    Explore Headsets &rarr;
+                </a>
+            </article>
+
+            <!-- Category: Chargers & Cables -->
+            <article class="category-card">
+                <img src="img/charrg.jpg"
+                     alt="Chargers and cables category"
+                     data-i18n-alt="category.chargers.imageAlt"
+                     class="category-image"
+                     width="300"
+                     height="200">
+                <h3 class="category-name" data-i18n="category.chargers.name">Chargers &amp; Cables</h3>
+                <a href="#" class="category-link"
+                   aria-label="Explore Chargers and Cables category"
+                   data-i18n-aria-label="category.chargers.linkAria"
+                   data-i18n="category.chargers.link">
+                    Explore Chargers &amp; Cables &rarr;
+                </a>
+            </article>
+
+            <!-- Category: Phone Cases -->
+            <article class="category-card">
+                <img src="img/photo_2026-10-22_14-40-57.jpg"
+                     alt="Phone cases category"
+                     data-i18n-alt="category.cases.imageAlt"
+                     class="category-image"
+                     width="300"
+                     height="200">
+                <h3 class="category-name" data-i18n="category.cases.name">Phone Cases</h3>
+                <a href="#" class="category-link"
+                   aria-label="Explore Phone Cases category"
+                   data-i18n-aria-label="category.cases.linkAria"
+                   data-i18n="category.cases.link">
+                    Explore Phone Cases &rarr;
+                </a>
+            </article>
+
+            <!-- Category: Screen Protectors -->
+            <article class="category-card">
+                <img src="img/photo_8_2026-10-22_14-11-13.jpg"
+                     alt="Screen protectors category"
+                     data-i18n-alt="category.screenProtectors.imageAlt"
+                     class="category-image"
+                     width="300"
+                     height="200">
+                <h3 class="category-name" data-i18n="category.screenProtectors.name">Screen Protectors</h3>
+                <a href="#" class="category-link"
+                   aria-label="Explore Screen Protectors category"
+                   data-i18n-aria-label="category.screenProtectors.linkAria"
+                   data-i18n="category.screenProtectors.link">
+                    Explore Screen Protectors &rarr;
+                </a>
+            </article>
+
+        </div>
+    </section>
+
+    <section class="featured-products-section" id="featured-products" aria-labelledby="featured-heading">
+
+        <h2 class="section-heading" id="featured-heading" data-i18n="featured.heading">
+            Featured Products
+        </h2>
+
+        <div class="products-grid">
+ <!-- Product card 1 -->
+            <article class="product-card" data-product-id="sample-001">
+                <img src="img/phone.jpg"
+                     alt="Sample product image"
+                     data-i18n-alt="product.sample1.imageAlt"
+                     class="product-image"
+                     width="250"
+                     height="250">
+                <div class="product-info">
+                    <h3 class="product-name" data-i18n="product.sample1.name">
+                        Sample Phone Model A
+                    </h3>
+                    <p class="product-price" data-i18n="product.pricePlaceholder">
+                        Price to be set (ETB)
+                    </p>
+                    <p class="product-stock in-stock" data-i18n="product.inStock">
+                        In Stock
+                    </p>
+                    <button type="button"
+                            class="add-to-cart-button"
+                            aria-label="Add Sample Phone Model A to cart"
+                            data-i18n-aria-label="product.sample1.addToCartAria">
+                        <span data-i18n="product.addToCart">Add to Cart</span>
+                    </button>
+                </div>
+            </article>
+
+            <!-- Product card 2 -->
+            <article class="product-card" data-product-id="sample-002">
+                <img src="img/tablet.jpg"
+                     alt="Sample product image"
+                     data-i18n-alt="product.sample2.imageAlt"
+                     class="product-image"
+                     width="250"
+                     height="250">
+                <div class="product-info">
+                    <h3 class="product-name" data-i18n="product.sample2.name">
+                        Sample Tablet Model B
+                    </h3>
+                    <p class="product-price" data-i18n="product.pricePlaceholder">
+                        Price to be set (ETB)
+                    </p>
+                    <p class="product-stock in-stock" data-i18n="product.inStock">
+                        In Stock
+                    </p>
+                    <button type="button"
+                            class="add-to-cart-button"
+                            aria-label="Add Sample Tablet Model B to cart"
+                            data-i18n-aria-label="product.sample2.addToCartAria">
+                        <span data-i18n="product.addToCart">Add to Cart</span>
+                    </button>
+                </div>
+            </article>
+
+            <!-- Product card 3 -->
+            <article class="product-card" data-product-id="sample-003">
+                <img src="img/earbuds.jpg"
+                     alt="Sample product image"
+                     data-i18n-alt="product.sample3.imageAlt"
+                     class="product-image"
+                     width="250"
+                     height="250">
+                <div class="product-info">
+                    <h3 class="product-name" data-i18n="product.sample3.name">
+                        Sample Earbuds Model C
+                    </h3>
+                    <p class="product-price" data-i18n="product.pricePlaceholder">
+                        Price to be set (ETB)
+                    </p>
+                    <p class="product-stock out-of-stock" data-i18n="product.outOfStock">
+                        Out of Stock
+                    </p>
+                    <button type="button"
+                            class="add-to-cart-button"
+                            aria-label="Add Sample Earbuds Model C to cart"
+                            data-i18n-aria-label="product.sample3.addToCartAria"
+                            disabled>
+                        <span data-i18n="product.addToCart">Add to Cart</span>
+                    </button>
+                </div>
+            </article>
+
+            <!-- Product card 4 -->
+            <article class="product-card" data-product-id="sample-004">
+                <img src="img/charrg.jpg"
+                     alt="Sample product image"
+                     data-i18n-alt="product.sample4.imageAlt"
+                     class="product-image"
+                     width="250"
+                     height="250">
+                <div class="product-info">
+                    <h3 class="product-name" data-i18n="product.sample4.name">
+                        Sample Charger Model D
+                    </h3>
+                    <p class="product-price" data-i18n="product.pricePlaceholder">
+                        Price to be set (ETB)
+                    </p>
+                    <p class="product-stock in-stock" data-i18n="product.inStock">
+                        In Stock
+                    </p>
+                    <button type="button"
+                            class="add-to-cart-button"
+                            aria-label="Add Sample Charger Model D to cart"
+                            data-i18n-aria-label="product.sample4.addToCartAria">
+                        <span data-i18n="product.addToCart">Add to Cart</span>
+                    </button>
+                </div>
+            </article>
+
+        </div>
+    </section>
+
+    <!-- ============================================= -->
+    <!-- PROMOTIONS SECTION                            -->
+    <!-- ============================================= -->
+    <section class="promo-banner-section" id="promotions" aria-labelledby="promo-heading">
+
+        <div class="promo-banner">
+
+            <h2 class="promo-heading" id="promo-heading" data-i18n="promo.heading">
+                Special Offers &amp; Discounts
+            </h2>
+
+            <p class="promo-text" data-i18n="promo.text">
+                Limited-time deals on phones, accessories, and more.
+                Check back often for new promotions.
+            </p>
+
+            <a href="#" class="promo-cta-button"
+               role="button"
+               data-i18n="promo.cta">
+                Explore Offers
+            </a>
+
+        </div>
+    </section>
+
+
+        <section class="cart-panel"
+                 id="cart-panel"
+                 aria-labelledby="cart-panel-heading"
+                 aria-live="polite">
+
+            <h2 class="cart-panel-heading" id="cart-panel-heading" data-i18n="cart.heading">
+                Your Shopping Cart
+            </h2>
+
+            <!-- Container where JavaScript injects cart items -->
+            <div class="cart-items-container" id="cart-items-container">
+            
+                <p class="cart-empty-message" id="cart-empty-message" data-i18n="cart.empty">
+                    Your cart is currently empty.
+                </p>
+            </div>
+
+            <!-- Subtotal -->
+            <div class="cart-subtotal-row">
+                <span class="cart-subtotal-label" data-i18n="cart.subtotalLabel">Subtotal:</span>
+                <span class="cart-subtotal-amount" id="cart-subtotal-amount">0.00 ETB</span>
+            </div>
+
+            <!-- Cart actions -->
+            <div class="cart-actions">
+                <button type="button"
+                        id="continue-shopping-button"
+                        class="continue-shopping-button"
+                        data-i18n="cart.continueShopping">
+                    Continue Shopping
+                </button>
+                <button type="button"
+                        id="checkout-button"
+                        class="checkout-button"
+                        data-i18n="cart.proceedToCheckout">
+                    Proceed to Checkout
+                </button>
+            </div>
+
+        </section>
+
+        <!-- ============================================= -->
+        <!-- CHECKOUT SECTION                              -->
+        <!-- ============================================= -->
+        <section class="checkout-section"
+                 id="checkout-section"
+                 aria-labelledby="checkout-heading">
+
+            <h2 class="section-heading" id="checkout-heading" data-i18n="checkout.heading">
+                Checkout
+            </h2>
+
+            <form class="checkout-form"
+                  id="checkout-form"
+                  action="#"
+                  method="post"
+                  novalidate>
+
+                <div class="form-field">
+                    <label for="customer-full-name" class="form-label" data-i18n="checkout.fullNameLabel">
+                        Full Name <span class="required-mark" aria-hidden="true">*</span>
+                    </label>
+                    <input type="text"
+                           id="customer-full-name"
+                           name="customerFullName"
+                           class="form-input"
+                           placeholder="Enter your full name"
+                           data-i18n-placeholder="checkout.fullNamePlaceholder"
+                           autocomplete="name"
+                           required
+                           aria-required="true">
+                </div>
+
+                <!-- Phone number -->
+                <div class="form-field">
+                    <label for="customer-phone" class="form-label" data-i18n="checkout.phoneLabel">
+                        Phone Number <span class="required-mark" aria-hidden="true">*</span>
+                    </label>
+                    <input type="tel"
+                           id="customer-phone"
+                           name="customerPhone"
+                           class="form-input"
+                           placeholder="e.g. 09XX XXX XXXX"
+                           data-i18n-placeholder="checkout.phonePlaceholder"
+                           autocomplete="tel"
+                           required
+                           aria-required="true">
+                </div>
+
+                <!-- Optional email -->
+                <div class="form-field">
+                    <label for="customer-email" class="form-label" data-i18n="checkout.emailLabel">
+                        Email Address (optional)
+                    </label>
+                    <input type="email"
+                           id="customer-email"
+                           name="customerEmail"
+                           class="form-input"
+                           placeholder="you@example.com"
+                           data-i18n-placeholder="checkout.emailPlaceholder"
+                           autocomplete="email">
+                </div>
+
+                <!-- Delivery method -->
+                <fieldset class="form-fieldset">
+                    <legend class="form-legend" data-i18n="checkout.deliveryMethodLegend">
+                        Delivery Method
+                    </legend>
+
+                    <div class="radio-option">
+                        <input type="radio"
+                               id="delivery-method-delivery"
+                               name="deliveryMethod"
+                               value="delivery"
+                               class="form-radio"
+                               checked>
+                        <label for="delivery-method-delivery" class="form-radio-label" data-i18n="checkout.deliveryOption">
+                            Home Delivery
+                        </label>
+                    </div>
+
+                    <div class="radio-option">
+                        <input type="radio"
+                               id="delivery-method-pickup"
+                               name="deliveryMethod"
+                               value="pickup"
+                               class="form-radio">
+                        <label for="delivery-method-pickup" class="form-radio-label" data-i18n="checkout.pickupOption">
+                            Store Pickup
+                        </label>
+                    </div>
+                </fieldset>
+
+                <!-- Delivery address (JS toggles visibility based on method) -->
+                <div class="form-field" id="delivery-address-field">
+                    <label for="delivery-address" class="form-label" data-i18n="checkout.addressLabel">
+ Delivery Address
+                    </label>
+                    <textarea id="delivery-address"
+                              name="deliveryAddress"
+                              class="form-textarea"
+                              rows="3"
+                              placeholder="Street, area, city…"
+                              data-i18n-placeholder="checkout.addressPlaceholder"
+                              autocomplete="street-address"></textarea>
+                </div>
+
+                <!-- Promo code -->
+                <div class="form-field promo-code-field">
+                    <label for="promo-code-input" class="form-label" data-i18n="checkout.promoLabel">
+                        Discount / Promo Code
+                    </label>
+                    <div class="promo-code-row">
+                        <input type="text"
+                               id="promo-code-input"
+                               name="promoCode"
+                               class="form-input promo-code-input"
+                               placeholder="Enter promo code"
+                               data-i18n-placeholder="checkout.promoPlaceholder">
+                        <button type="button"
+                                id="apply-promo-button"
+                                class="apply-promo-button"
+                                data-i18n="checkout.applyPromo">
+                            Apply
+                        </button>
+                    </div>
+                    <p class="promo-feedback"
+                       id="promo-feedback"
+                       role="status"
+                       aria-live="polite"></p>
+                </div>
+
+                <!-- Order total -->
+                <div class="order-total-row">
+                    <span class="order-total-label" data-i18n="checkout.orderTotalLabel">Order Total:</span>
+                    <span class="order-total-amount" id="order-total-amount">0.00 ETB</span>
+                </div>
+                   <!-- Payment Instructions -->
+<div class="payment-instructions" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fbf9; border: 2px dashed var(--color-primary); border-radius: 8px;">
+    <h3 style="margin-top: 0; color: var(--color-primary-dark); font-size: 1rem;">💳 Payment Method: Bank Transfer</h3>
+    <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">Please transfer the total amount to our account:</p>
+    <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.9rem; font-weight: bold;">
+        <li>🏦 Bank: Commercial Bank of Ethiopia (CBE)</li>
+        <li>🔢 Account Number: 1000*****5012</li>
+        <li>👤 Account Name: Museab Yahya Ali</li>
+    </ul>
+    <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-top: 0.5rem; margin-bottom: 0;">
+        After transferring, please send the receipt to our Telegram support so we can process your order quickly.
+    </p>
+</div>
+                <!-- Place order button -->
+                <button type="submit"
+                        id="place-order-button"
+                        class="place-order-button"
+                        data-i18n="checkout.placeOrder">
+                    Place Order
+                </button>
+            </form>
+
+        </section>
+
+        
+        <section class="support-section"
+                 id="customer-support"
+                 aria-labelledby="support-heading">
+
+            <h2 class="section-heading" id="support-heading" data-i18n="support.heading">
+                Need Help?
+            </h2>
+
+            <p class="support-message" data-i18n="support.message">
+                Have a question about a product or your order? Our team is happy to help.
+                Reach out to us on Telegram or give us a call before placing your order.
+            </p>
+<div class="support-links">
+
+    <!-- Telegram Link -->
+    <a href="https://t.me/london_shop_orders_bot"
+       target="_blank"
+       class="support-link telegram-link"
+       aria-label="Contact us on Telegram"
+       data-i18n-aria-label="support.telegramAria"
+       data-i18n="support.telegramLink">
+        💬 Telegram Support
+    </a>
+
+    <!-- Phone Link -->
+  <!-- WhatsApp Link (Works on PC and Mobile) -->
+<a href="https://wa.me/251930613306"
+   target="_blank"
+   class="support-link phone-link"
+   aria-label="Chat with us on WhatsApp"
+   data-i18n-aria-label="support.phoneAria"
+   data-i18n="support.phoneLink">
+    📞 WhatsApp Support
+</a>
+
+</div
+        </section>
+
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+
+        <div class="footer-container">
+
+            <!-- Brand column -->
+            <div class="footer-brand">
+                <p class="footer-brand-name">
+                    London <span lang="am">(ለንደን)</span>
+                </p>
+                <p class="footer-tagline" data-i18n="footer.tagline">
+                    Mobile phones &amp; accessories you can trust.
+                </p>
+            </div>
+
+            <!-- Navigation links -->
+            <nav class="footer-nav" aria-label="Footer navigation">
+                <h3 class="footer-heading" data-i18n="footer.quickLinksHeading">Quick Links</h3>
+                <ul class="footer-list">
+                    <li><a href="#" class="footer-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="#" class="footer-link" data-i18n="nav.earbuds">Earbuds</a></li>
+                    <li><a href="#" class="footer-link" data-i18n="nav.headsets">Headsets</a></li>
+                    <li><a href="#" class="footer-link" data-i18n="nav.tablets">Tablets</a></li>
+                    <li><a href="#" class="footer-link" data-i18n="nav.earbuds">Earbuds &amp; Headsets</a></li>
+                    <li><a href="#" class="footer-link" data-i18n="nav.accessories">Accessories</a></li>
+                    <li><a href="#" class="footer-link" data-i18n="nav.contact">Contact</a></li>
+                </ul>
+            </nav>
+
+            <!-- Category links -->
+            <nav class="footer-nav" aria-label="Footer product categories">
+                <h3 class="footer-heading" data-i18n="footer.categoriesHeading">Categories</h3>
+                <ul class="footer-list">
+                    <li><a href="#" class="footer-link" data-i18n="category.chargers.name">Chargers &amp; Cables</a></li>
+                    <li><a href="#" class="footer-link" data-i18n="category.cases.name">Phone Cases</a></li>
+                    <li><a href="#" class="footer-link" data-i18n="category.screenProtectors.name">Screen Protectors</a></li>
+                </ul>
+            </nav>
+
+            <!-- Contact placeholders -->
+            <div class="footer-contact">
+                <h3 class="footer-heading" data-i18n="footer.contactHeading">Contact</h3>
+             <ul class="footer-list">
+    <li>📍 Kemisse around Dawe mosque</li>
+    <li>📞 +251 930613306</li>
+    <li>✉️ yusraayahya5@gmail.com</li>
+    <li>🏦 CBE Account: ...</li>
+    <li>💬 Telegram: @london_shop_orders_bot</li>
+    <li>🕒 1:00 AM - 3:00 AM</li>
+</ul>
+
+            </div>
+
+        </div>
+
+        <!-- Copyright bar -->
+        <div class="footer-bottom">
+            <p class="copyright-text">
+                &copy; <span id="footer-year">2025</span>
+                London <span lang="am">(ለንደን)</span>.
+                <span data-i18n="footer.copyright">All rights reserved.</span>
+            </p>
+        </div>
+
+
+    </footer>
+
+</body>
+</html>
+
