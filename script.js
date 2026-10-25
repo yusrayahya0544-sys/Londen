@@ -2032,17 +2032,28 @@ try {
     }
 
     // B. Insert the main order receipt into the 'orders' table
-    const { data: orderData, error: orderError } = await db
-        .from('orders')
-        .insert([{
-            customer_name: data.fullName,
-            customer_phone: data.phone,
-            delivery_method: data.method,
-            delivery_address: data.address,
-            total_amount: secureTotal,
-            status: 'pending'
-        }])
-        .select(); // This asks Supabase to return the new row (so we get the ID)
+
+// 1. Calculate the final numbers first
+const appliedDiscount = LondonApp.discountValue || 0; // Use your actual promo variable
+const finalTotal = secureTotal - appliedDiscount;
+
+const { data: orderData, error: orderError } = await db
+    .from('orders')
+    .insert([{
+        customer_name: data.fullName,
+        customer_phone: data.phone,
+        delivery_method: data.method,
+        delivery_address: data.address,
+        
+        // 2. Save all the different amounts separately
+        subtotal: secureTotal,                          // Original price
+        discount_amount: appliedDiscount,               // How much was taken off
+        discount_code: LondonApp.appliedPromoCode || null, // The code used
+        total_amount: finalTotal,                       // The final price to pay
+        
+        status: 'pending'
+    }])
+    .select(); // This asks Supabase to return the new row (so we get the ID)// This asks Supabase to return the new row (so we get the ID)
 
     if (orderError) throw orderError;
 

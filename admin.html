@@ -164,95 +164,147 @@ db.auth.onAuthStateChange((event, session) => {
         });
 
         // 4. Placeholder for loading orders (we will write this in the next step)
-       // 4. Load and display orders
+  // 4. Load and Display Orders
 async function loadOrders() {
     const container = document.getElementById('orders-container');
     container.innerHTML = "<p>Loading orders...</p>";
 
-    // Fetch orders and their related items (using the foreign key!)
     const { data: orders, error } = await db
         .from('orders')
-        .select(`
-            *,
-            order_item (
-                quantity,
-                price_at_time,
-                products ( name )
-            )
-        `)
+        .select(`*, order_item (quantity, price_at_time, products ( name ))`)
         .order('created_at', { ascending: false });
 
     if (error) {
-        container.innerHTML = "<p style='color:red'>Error loading orders: " + error.message + "</p>";
+        console.error(error);
+        container.innerHTML = `<p style='color:red'>Error loading orders.</p>`;
         return;
     }
 
-    if (orders.length === 0) {
+    if (!orders || orders.length === 0) {
         container.innerHTML = "<p>No orders yet.</p>";
         return;
     }
 
-    // Build the HTML for each order
-    container.innerHTML = ""; // Clear loading text
+    container.innerHTML = "";
 
     orders.forEach(order => {
-        // Format the items into a string (e.g., "2x Test Phone")
+        // Format items
         let itemsHtml = "";
-        if (order.order_item) {
+        if (order.order_item && Array.isArray(order.order_item)) {
             order.order_item.forEach(item => {
-                const productName = item.products ? item.products.name : "Unknown Product";
-                itemsHtml += `<li>${item.quantity}x ${productName} (${item.price_at_time} ETB each)</li>`;
-            });
+                let productName = "Unknown Product";
+                if(item.products){
+                    if (Array.isArray(item.products) &&item.product.lengts.length > 0){
+                        productName = item.products[0].name;
+                    } else if (item.products.name){
+                        productName = item.products.name;
+                    }
+                }
+                itemsHtml += `<li>${item.quantity}x ${productName} (${item.price_at_time}ETB each)</li>`;
+                      });
         }
 
         const orderCard = document.createElement('div');
-        orderCard.style.border = "1px solid var(--color-border)";
         orderCard.style.padding = "1rem";
         orderCard.style.marginBottom = "1rem";
         orderCard.style.borderRadius = "8px";
-        orderCard.style.backgroundColor = "#f9fbf9";
+        orderCard.style.border = "1px solid var(--color-border)";
+
+        // Color Logic
+        const safeStatus = String(order.status || 'pending').toLowerCase().trim();
+        let badgeColor = "#7f8c8d"; // Default Gray
+        let lightBg = "#f9fbf9";
+
+        if (safeStatus === 'pending') {
+            badgeColor = "#f39c12"; // Orange
+            lightBg = "#fffdf5";
+        } else if (safeStatus === 'confirmed') {
+            badgeColor = "#3498db"; // Blue
+            lightBg = "#f5faff";
+        } else if (safeStatus === 'shipped') {
+            badgeColor = "#9b59b6"; // Purple
+            lightBg = "#faf5fc";
+        } else if (safeStatus === 'delivered') {
+            badgeColor = "#27ae60"; // Green
+            lightBg = "#f0fff4";
+        }
+
+        // Apply the thick left border and background tint
+        orderCard.style.borderLeft = "8px solid " + badgeColor;
+        orderCard.style.backgroundColor = lightBg;
+        const safeCustomerName = order.customer_name ? order.customer_name.replace(/'/g, "&#39;") : "Unknown Customer";
 
         orderCard.innerHTML = `
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-        <h3 style="margin: 0;">Order #${order.id} - ${order.customer_name}</h3>
-        
-        <select onchange="updateOrderStatus(${order.id}, this.value)" style="padding: 6px; border-radius: 6px; border: 1px solid #ccc; font-weight: bold; cursor: pointer; background: white;">
-            <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
-            <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>Confirmed</option>
-            <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>Shipped</option>
-            <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Delivered</option>
-        </select>
-    </div>
-    
-    <p style="margin: 0.2rem 0;"><strong>Phone:</strong> ${order.customer_phone}</p>
-    <p style="margin: 0.2rem 0;"><strong>Method:</strong> ${order.delivery_method} ${order.delivery_address ? ' - ' + order.delivery_address : ''}</p>
-    <p style="margin: 0.2rem 0;"><strong>Total:</strong> ${order.total_amount} ETB</p>
-    
-    <div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed #ccc;">
-        <strong>Items:</strong>
-        <ul style="margin: 0.2rem 0; padding-left: 1.5rem;">
-            ${itemsHtml}
-        </ul>
-    </div> `
-;
+           <p style="margin: 0.2rem 0;"><strong>Subtotal:</strong> ${order.subtotal || order.total_amount || 0} ETB</p>
+
+${(order.discount_amount > 0) ? `
+    <p style="margin: 0.2rem 0; color: #27ae60;">
+        <strong>Discount (${order.discount_code}):</strong> -${order.discount_amount} ETB
+    </p>
+ `: ''}
+
+<p style="margin: 0.2rem 0; font-size: 1.1em;"><strong>Total:</strong> ${order.total_amount || 0} ETB</p>
+                <h3 style="margin: 0; display: flex; align-items: center; gap: 10px;">
+                    Order #${order.id} - ${safeCustomerName}
+                    <span style="
+                        font-size: 0.75rem; 
+                        padding: 4px 8px; 
+                        border-radius: 4px; 
+                        color: white; 
+                        text-transform: uppercase;
+                        background-color: ${badgeColor};
+                    ">
+                        ${order.status || 'pending'}
+                    </span>
+                </h3>
+                
+                <select onchange="updateOrderStatus(${order.id}, this.value, event)" style="padding: 6px; border-radius: 6px; border: 1px solid #ccc; font-weight: bold; cursor: pointer; background: white;">
+                    <option value="pending" ${safeStatus === 'pending' ? 'selected' : ''}>Pending</option>
+                    <option value="confirmed" ${safeStatus === 'confirmed' ? 'selected' : ''}>Confirmed</option>
+                    <option value="shipped" ${safeStatus === 'shipped' ? 'selected' : ''}>Shipped</option>
+                    <option value="delivered" ${safeStatus === 'delivered' ? 'selected' : ''}>Delivered</option>
+                </select>
+            </div>
+            
+            <p style="margin: 0.2rem 0;"><strong>Phone:</strong> ${order.customer_phone || 'N/A'}</p>
+            <p style="margin: 0.2rem 0;"><strong>Method:</strong> ${order.delivery_method || 'N/A'} ${order.delivery_address ? ' - ' + order.delivery_address : ''}</p>
+            <p style="margin: 0.2rem 0;"><strong>Total:</strong> ${order.total_amount || 0} ETB</p>
+            
+            <div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed #ccc;">
+                <strong>Items:</strong>
+                <ul style="margin: 0.2rem 0; padding-left: 1.5rem;">
+                    ${itemsHtml || '<li>No items found</li>'}
+                </ul>
+            </div>
+        `;
 
         container.appendChild(orderCard);
     });
 }
-
 // 5. Update Order Status
-async function updateOrderStatus(orderId, newStatus) {
-    const { error } = await db
+async function updateOrderStatus(orderId, newStatus, event) {
+    if (event) event.preventDefault(); // Stops any page reload
+
+    console.log("Updating order:", orderId, "to:", newStatus);
+
+    // We add .select() to verify the update actually happened
+    const { data, error } = await db
         .from('orders')
         .update({ status: newStatus })
-        .eq('id', orderId);
+        .eq('id', orderId)
+        .select();
 
     if (error) {
         alert("Error updating status: " + error.message);
-        console.error(error);
+        loadOrders(); // Revert UI if it fails
+    } else if (data.length === 0) {
+        // If data is empty, it means RLS blocked the update
+        alert("Failed to save. Please check your Supabase permissions.");
+        loadOrders(); // Revert UI
     } else {
+        // Success!
         alert(`Order #${orderId} marked as ${newStatus.toUpperCase()}`);
-        loadOrders(); // Refresh the list
+        loadOrders(); // Reload to show the new status
     }
 }
 // 6. Add New Product Logic
