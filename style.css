@@ -727,3 +727,90 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     cursor: pointer;
     color: var(--color-text-muted);
 }
+
+/* ============================================================
+   MOBILE HEADER REDESIGN (Max Width 768px)
+   ============================================================ */
+@media (max-width: 768px) {
+    /* 1. Make the top row a single line */
+    .header-top {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 15px;
+        height: 60px; /* Reduces vertical space */
+        gap: 10px;
+    }
+
+    /* 2. Hide elements that take too much space */
+    .search-container {
+        display: none !important; /* Hides the big search bar */
+    }
+
+    /* 3. Show the new mobile buttons */
+    .hamburger-btn,
+    .mobile-search-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: var(--color-primary-dark);
+        cursor: pointer;
+    }
+
+    /* 4. Adjust Brand (Location) */
+    .brand-container {
+        flex: 1;
+        justify-content: flex-start;
+        margin-right: auto;
+    }
+    
+    .brand-name { font-size: 1.1rem; }
+    .brand-logo { width: 30px; height: 30px; }
+
+    /* 5. Make language and cart smaller */
+    .language-select { padding: 5px 25px 5px 10px; font-size: 0.8rem; }
+    .cart-button { width: 35px; height: 35px; font-size: 1rem; }
+
+    /* 6. HAMBURGER MENU LOGIC */
+    /* Hide the nav menu by default on mobile */
+    .main-nav {
+        display: none;
+        width: 100%;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        background: white;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        z-index: 999;
+    }
+
+    /* When JS adds the 'active' class, show it */
+    .main-nav.active {
+        display: block;
+    }
+
+    .nav-list {
+        flex-direction: column;
+        padding: 10px;
+        gap: 0;
+    }
+
+    .nav-link {
+        display: block;
+        padding: 15px;
+        border-bottom: 1px solid var(--color-border);
+        border-radius: 0;
+    }
+}
+
+/* Hide the mobile buttons on desktop */
+@media (min-width: 769px) {
+    .hamburger-btn,
+    .mobile-search-btn {
+        display: none;
+    }
+}

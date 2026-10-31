@@ -79,6 +79,10 @@ console.log("Supabase connected successfully!");
             "promo.heading": "Special Offers & Discounts",
             "promo.text": "Limited-time deals on phones, accessories, and more. Check back often for new promotions.",
             "promo.cta": "Explore Offers",
+
+            "category.powerbanks.name": "Power Banks",
+        "category.powerbanks.link": "Explore Power Banks",
+        "category.powerbanks.imageAlt": "Power Banks",
         },
 
         am: {
@@ -240,6 +244,7 @@ if (catId === 4) cat = 'headsets';
 if (catId === 5) cat = 'chargers';
 if (catId === 6) cat = 'cases';
 if (catId === 7) cat = 'screenProtectors';
+if (catId === 8) cat = 'powerbanks'
 
         return {
             id: product.id.toString(),
@@ -548,6 +553,7 @@ function applyFilters() {
             "screen protector",
             "phone case",
             "charger",
+            "power bank",
             "headset",
             "earbud",
             "tablet",
@@ -562,6 +568,7 @@ function applyFilters() {
                 if (order[i] === "charger") return "chargers";
                 if (order[i] === "phone case") return "cases";
                 if (order[i] === "screen protector") return "screenProtectors";
+                if (order[i] === "power bank") return "powerbanks";
             }
         }
         return null;
@@ -801,32 +808,43 @@ function initCategories() {
      * Validates against the current cart subtotal (which must use
      * only products with real prices).
      */
-    function calculateDiscount(subtotal) {
-        const code = LondonApp.appliedPromo;
-        if (!code) return null;
-        const rule = PROMO_RULES[code];
-        if (!rule) return null;
-        if (subtotal <= 0) return null;
-        if (rule.minSubtotal && subtotal < rule.minSubtotal) return null;
+   function calculateDiscount(subtotal) {
+    const code = LondonApp.appliedPromo;
+    if (!code) return null;
 
-        if (rule.type === "percent") {
-            return {
-                code: code,
-                label: rule.label,
-                amount: Math.round(subtotal * rule.value) / 100, // 2-decimal safety
-            };
-        }
-        if (rule.type === "fixed") {
-            return {
-                code: code,
-                label: rule.label,
-                amount: Math.min(rule.value, subtotal),
-            };
-        }
-        return null;
+    // If the code is a number, treat it as a fixed discount
+    if (!isNaN(code) && Number(code) > 0) {
+        return {
+            code: code,
+            label: `${code} ETB off`,
+            // Ensure discount doesn't exceed the cart subtotal
+            amount: Math.min(Number(code), subtotal) 
+        };
     }
 
+    // Otherwise, check the predefined rules (like LONDON10)
+    const rule = PROMO_RULES[code];
+    if (!rule) return null;
+    
+    if (subtotal <= 0) return null;
+    if (rule.minSubtotal && subtotal < rule.minSubtotal) return null;
 
+    if (rule.type === "percent") {
+        return {
+            code: code,
+            label: rule.label,
+            amount: Math.round(subtotal * rule.value) / 100, 
+        };
+    }
+    if (rule.type === "fixed") {
+        return {
+            code: code,
+            label: rule.label,
+            amount: Math.min(rule.value, subtotal), 
+        };
+    }
+    return null;
+}
     /* ============================================================
        3. CART CALCULATION HELPERS
        ------------------------------------------------------------
@@ -1112,36 +1130,42 @@ function createCartItemRow(entry) {
     /* ============================================================
        8. PROMO CODE — APPLY / REMOVE
        ============================================================ */
-    function applyPromoCode(rawCode) {
-        const code = (rawCode || "").trim().toUpperCase();
-        const feedback = document.getElementById("promo-feedback");
+  function applyPromoCode(rawCode) {
+    const code = (rawCode || "").trim().toUpperCase();
+    const feedback = document.getElementById("promo-feedback");
 
-        if (!code) {
-            renderPromoFeedbackError(t("checkout.promoPlaceholder") || "Enter a promo code");
-            return;
-        }
-
-        const rule = PROMO_RULES[code];
-        if (!rule) {
-            renderPromoFeedbackError("Invalid promo code.");
-            return;
-        }
-
-        // Validate against current cart subtotal (only priced items count)
-        const breakdown = buildCartBreakdown();
-        if (breakdown.subtotal <= 0) {
-            renderPromoFeedbackError("Add items with valid prices first.");
-            return;
-        }
-
-        LondonApp.appliedPromo = code;
-        refreshCartUI();
-        if (feedback) {
-            feedback.classList.remove("error");
-            feedback.classList.add("success");
-            feedback.textContent = "Code applied: " + rule.label;
-        }
+    if (!code) {
+        renderPromoFeedbackError("Enter a promo code");
+        return;
     }
+
+    // Check if the code is a number (e.g., "300" or "500")
+    const isNumber = !isNaN(code) && Number(code) > 0;
+
+    // Check if the code is in our pre-defined rules (e.g., "LONDON10")
+    const isPredefined = PROMO_RULES[code] !== undefined;
+
+    if (!isNumber && !isPredefined) {
+        renderPromoFeedbackError("Invalid promo code.");
+        return;
+    }
+
+    const breakdown = buildCartBreakdown();
+    if (breakdown.subtotal <= 0) {
+        renderPromoFeedbackError("Add items with valid prices first.");
+        return;
+    }
+
+    // Save the code
+    LondonApp.appliedPromo = code;
+    refreshCartUI();
+    
+    if (feedback) {
+        feedback.classList.remove("error");
+        feedback.classList.add("success");
+   
+    }
+}
 
     function removePromoCode() {
         LondonApp.appliedPromo = null;
@@ -1183,12 +1207,22 @@ function createCartItemRow(entry) {
         }
     }
  
-    function updateOrderTotal(subtotal, discountAmount) {
-        const el = document.getElementById("order-total-amount");
-        if (!el) return;
-        const total = Math.max(0, (subtotal ||  0) - (discountAmount ||0));
-        el.textContent = formatPrice(total);
-    }
+function updateOrderTotal(subtotal, discountAmount) {
+    const el = document.getElementById("order-total-amount");
+    if (!el) return;
+
+    // Calculate delivery fee (Free over 200)
+    let deliveryFee = 100;
+    if (subtotal >= 200) deliveryFee = 0;
+
+    // Math: Subtotal + Delivery - Discount
+    let total = (subtotal || 0) + deliveryFee ;
+    
+    // Never allow total to be less than 0
+    if (total < 0) total = 0;
+
+    el.textContent = formatPrice(total);
+}
 
 
     /* ============================================================
@@ -1280,39 +1314,68 @@ if (cartBtn && cartPanel) {
 }
 
         // Cart panel: Continue Shopping closes panel / scrolls up
-        const continueBtn = document.getElementById("continue-shopping-button");
-        if (continueBtn) {
-            continueBtn.addEventListener("click", function () {
-                const panel = document.getElementById("cart-panel");
-                if (panel) panel.scrollIntoView({ behavior: "smooth" });
-                const featured = document.getElementById("featured-products");
-                if (featured) featured.scrollIntoView({ behavior: "smooth" });
-            });
-        }
+   const continueBtn = document.getElementById("continue-shopping-button");
+if (continueBtn) {
+    continueBtn.addEventListener("click", function () {
+        // Close the slide-out cart drawer
+        const panel = document.getElementById("cart-panel");
+        const overlay = document.querySelector(".cart-panel-overlay");
+        
+        if (panel) panel.classList.remove("is-open");
+        if (overlay) overlay.classList.remove("is-open");
+        
+        // Scroll back to the products
+        const featured = document.getElementById("featured-products");
+        if (featured) featured.scrollIntoView({ behavior: "smooth" });
+    });
+}
 
         // Cart panel: Proceed to Checkout scrolls to checkout section
-        const checkoutBtn = document.getElementById("checkout-button");
-        if (checkoutBtn) {
-            checkoutBtn.addEventListener("click", function () {
-                const target = document.getElementById("checkout-section");
-                if (target) target.scrollIntoView({ behavior: "smooth" });
-            });
-        }
+  const checkoutBtn = document.getElementById("checkout-button");
+if (checkoutBtn) {
+    checkoutBtn.addEventListener("click", function (event) {
+        event.preventDefault(); 
+        
+        // 1. Close the slide-out cart drawer
+        const panel = document.getElementById("cart-panel");
+        const overlay = document.querySelector(".cart-panel-overlay");
+        if (panel) panel.classList.remove("is-open");
+        if (overlay) overlay.classList.remove("is-open");
+
+        // 2. Wait a moment for the drawer to close, then scroll
+        setTimeout(function() {
+            const target = document.getElementById("checkout-section");
+            if (target) {
+                target.scrollIntoView({ behavior: "smooth", block: "start" });
+            } else {
+                console.error("Could not find the checkout-section element!");
+            }
+        }, 400); 
+    }); // <--- END of click listener
+} // <--- END of if(checkoutBtn)
+
+// DELETE the second setTimeout that was here!
+
+// Promo: Apply button
+// ... rest of your code
+
+
 
         // Promo: Apply button
-        const applyBtn = document.getElementById("apply-promo-button");
-        const promoInput = document.getElementById("promo-code-input");
- if (applyBtn && promoInput) {
-            applyBtn.addEventListener("click", function () {
-                applyPromoCode(promoInput.value);
-            });
-            promoInput.addEventListener("keydown", function (event) {
-                if (event.key === "Enter") {
-                    event.preventDefault();
-                    applyPromoCode(promoInput.value);
-                }
-            });
+ const applyBtn = document.getElementById("apply-promo-button");
+const promoInput = document.getElementById("promo-code-input");
+if (applyBtn && promoInput) {
+    applyBtn.addEventListener("click", function (event) {
+        event.preventDefault(); // Stops the page from reloading
+        applyPromoCode(promoInput.value);
+    });
+    promoInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault(); // Stops the page from reloading
+            applyPromoCode(promoInput.value);
         }
+    });
+}
 
         // Initial paint
         refreshCartUI();
@@ -1681,10 +1744,8 @@ if (cartBtn && cartPanel) {
         else if (deliveryRadio && deliveryRadio.checked) method = "delivery";
 
         const deliveryFee = getDeliveryFee(method);
-        const total = Math.max(
-            0,
-            breakdown.subtotal - discountAmount + deliveryFee
-        );
+        const total =  breakdown.subtotal + deliveryFee;
+        
  return {
             items: breakdown.items,
             subtotal: breakdown.subtotal,
@@ -1957,145 +2018,127 @@ const price = document.createElement("span");
          POST /api/orders  (server re-checks prices, stock,
                             discounts, delivery fee, totals)
        ============================================================ */
-   async function handleCheckoutSubmit(event) {
-        if (event && event.preventDefault) event.preventDefault();
+ async function handleCheckoutSubmit(event) {
+    if (event && event.preventDefault) event.preventDefault();
 
-        const form = document.getElementById("checkout-form");
-        if (!form) return;
-
-        // 1) Cart must not be empty
-        const snapshot = buildOrderSnapshot();
-        if (!snapshot.items.length) {
-            showToastSafe(t("checkout.error.emptyCart"));
-            return;
-        }
-
-        // 2) No unpriced items allowed at checkout
-        if (snapshot.hasUnpricedItem) {
-            showToastSafe(t("checkout.error.unpricedItem"));
-            return;
-        } // 3) Form validation
-        const { valid, data } = validateCheckoutForm();
-        if (!valid || !data) {
-            showToastSafe(t("checkout.error.generic"));
-            // Focus first error field for accessibility
-            const firstError = form.querySelector(".has-error input, .has-error textarea");
-            if (firstError) firstError.focus();
-            return;
-        }
-
-   // 4) SAVE THE REAL ORDER TO SUPABASE (Secure Calculation)
-// We show a loading message while it saves
-
-// 🛑 SMART CHECK: Prevent spam by checking for existing pending orders
-//const { data: existingOrders, error: checkError } = await db
-   // .from('orders')
-   // .select('id')
-   // .eq('customer_phone', data.phone)
-   // .eq('status', 'pending');
-
-//if (existingOrders && existingOrders.length > 0) {
-    //alert("You already have a pending order. Please wait for us to call you before placing another one.");
-   // return; // This stops the checkout here
-//}
-//const submitBtn = document.getElementById("place-order-button");
-//if (submitBtn) {
-//    submitBtn.disabled = true;
-  //  submitBtn.textContent = "Placing Order...";
-//}
-
-
-
-
-
-try {
-    // A. Recalculate the total securely using the database prices
-    let secureTotal = 0;
-    const itemsToInsert = [];
-
-    for (let item of LondonApp.cart) {
-        // Find the real product in our loaded database products list
-        const dbProduct = LondonApp.products.find(p => p.id.toString() === item.productId.toString());
-        
-        if (!dbProduct) {
-            throw new Error("Product not found in database.");
-        }
-
-        const truePrice = dbProduct.price; 
-        secureTotal += (truePrice * item.quantity);
-        
-        itemsToInsert.push({
-            product_id: dbProduct.id,
-            quantity: item.quantity,
-            price_at_time: truePrice
-        });
-    }
-
-    // B. Insert the main order receipt into the 'orders' table
-
-// 1. Calculate the final numbers first
-const appliedDiscount = LondonApp.discountValue || 0; // Use your actual promo variable
-const finalTotal = secureTotal - appliedDiscount;
-
-const { data: orderData, error: orderError } = await db
-    .from('orders')
-    .insert([{
-        customer_name: data.fullName,
-        customer_phone: data.phone,
-        delivery_method: data.method,
-        delivery_address: data.address,
-        
-        // 2. Save all the different amounts separately
-        subtotal: secureTotal,                          // Original price
-        discount_amount: appliedDiscount,               // How much was taken off
-        discount_code: LondonApp.appliedPromoCode || null, // The code used
-        total_amount: finalTotal,                       // The final price to pay
-        
-        status: 'pending'
-    }])
-    .select(); // This asks Supabase to return the new row (so we get the ID)// This asks Supabase to return the new row (so we get the ID)
-
-    if (orderError) throw orderError;
-
-    const newOrderId = orderData[0].id;
-
-    // C. Insert the items into the 'order_item' table
-    // We add the newOrderId to every item so they are linked to the receipt
-    const finalItemsToInsert = itemsToInsert.map(item => ({
-        ...item,
-        order_id: newOrderId
-    }));
-
-    const { error: itemsError } = await db
-        .from('order_item')
-        .insert(finalItemsToInsert);
-
-    if (itemsError) throw itemsError;
-
-    // D. Success! Clear the cart and show a message
-    alert("Order Placed Successfully! We will contact you soon.");
-    
-    LondonApp.cart = [];
-    localStorage.removeItem("london_cart");
-    if (typeof LondonApp.refreshCartUI === 'function') {
-        LondonApp.refreshCartUI();
-    }
-    
-    // Reset the form
     const form = document.getElementById("checkout-form");
-    if (form) form.reset();
+    if (!form) return;
 
-} catch (error) {
-    console.error("Failed to save order:", error);
-    alert("Sorry, there was a problem placing your order. Please try again.");
-} finally {
-    // Re-enable the button
+    // 🛑 1. Define the button BEFORE the try block so finally can access it
+    const submitBtn = document.getElementById("place-order-button");
+
+    // 🛑 2. Disable the button immediately so they can't double-click
     if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Place Order";
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Placing Order...";
+    }
+
+    // 3. Cart must not be empty
+    const snapshot = buildOrderSnapshot();
+    if (!snapshot.items.length) {
+        showToastSafe(t("checkout.error.emptyCart"));
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = t("checkout.placeOrder"); }
+        return;
+    }
+
+    // 4. No unpriced items allowed at checkout
+    if (snapshot.hasUnpricedItem) {
+        showToastSafe(t("checkout.error.unpricedItem"));
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = t("checkout.placeOrder"); }
+        return;
+    }
+
+    // 5. Form validation
+    const { valid, data } = validateCheckoutForm();
+    if (!valid || !data) {
+        showToastSafe(t("checkout.error.generic"));
+        const firstError = form.querySelector(".has-error input, .has-error textarea");
+        if (firstError) firstError.focus();
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = t("checkout.placeOrder"); }
+        return;
+    }
+
+    try {
+        // Recalculate total securely
+        let secureTotal = 0;
+        const itemsToInsert = [];
+
+        for (let item of LondonApp.cart) {
+            const dbProduct = LondonApp.products.find(p => p.id.toString() === item.productId.toString());
+            if (!dbProduct) throw new Error("Product not found in database.");
+            
+            const truePrice = dbProduct.price; 
+            secureTotal += (truePrice * item.quantity);
+            
+            itemsToInsert.push({
+                product_id: dbProduct.id,
+                quantity: item.quantity,
+                price_at_time: truePrice
+            });
+        }
+
+        // Insert into orders table
+        const { data: orderData, error: orderError } = await db
+            .from('orders')
+            .insert([{
+
+                customer_name: data.fullName,
+                customer_phone: data.phone,
+                delivery_method: data.method,
+                delivery_address: data.address,
+                subtotal: snapshot.subtotal,
+                discount_code:snapshot.discountCode,
+                discount_amount:snapshot.discount,
+                total_amount: snapshot.total,
+                status: 'pending'
+            }])
+            .select(); 
+
+        if (orderError) throw orderError;
+        const newOrderId = orderData[0].id;
+
+        // Insert into order_item table
+        const finalItemsToInsert = itemsToInsert.map(item => ({ ...item, order_id: newOrderId }));
+        const { error: itemsError } = await db.from('order_item').insert(finalItemsToInsert);
+
+        if (itemsError) throw itemsError;
+
+        // Success!
+        // Send to Telegram now that items are saved
+// Send to Telegram using the Supabase client (bypasses fetch errors)
+try {
+    const { data, error } = await db.functions.invoke('telegram-notify', {
+        body: { 
+            record: { 
+                ...orderData[0], 
+                id: newOrderId 
+            } 
+        }
+    });
+    
+    if (error) console.error("Telegram function error:", error);
+    else console.log("Telegram sent successfully!", data);
+    
+} catch (tgError) {
+    console.error("Failed to connect to Telegram:", tgError);
+}
+        alert("Order Placed Successfully! We will contact you soon.");
+        LondonApp.cart = [];
+        localStorage.removeItem("london_cart");
+        if (typeof LondonApp.refreshCartUI === 'function') LondonApp.refreshCartUI();
+        form.reset();
+
+    } catch (error) {
+        console.error("Failed to save order:", error);
+        alert("Sorry, there was a problem placing your order. Please try again.");
+    } finally {
+        // 🛑 4. This will now work because submitBtn is defined at the top!
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Place Order";
+        }
     }
 }
-    }
 
     function showToastSafe(message) {
         // Reuse Part 2's toast if available; otherwise alert as last resort
